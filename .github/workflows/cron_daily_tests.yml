@@ -11,10 +11,6 @@ jobs:
   executeTests:
     runs-on: self-hosted
     steps:
-      - name: Camunda restart
-        run: curl https://oysmfpy2fookwr2tkflfaiwbha0ioqed.lambda-url.us-west-2.on.aws/
-      - name: FIX perms
-        run: sudo chown ubuntu:ubuntu -R /home/ubuntu
       - name: Checkout
         uses: actions/checkout@v3
       - name: Print Java version (pre-installed in Github Actions Runner)
@@ -27,25 +23,8 @@ jobs:
           google-chrome-stable --version
       - name: Run tests
         id: tests
-        env:
-          DEFAULT_USER: ${{ secrets.DEFAULT_USER }}
-          DEFAULT_USER_PASSWORD: ${{ secrets.DEFAULT_USER_PASSWORD }}
-          SERVICE_BUS_USER: ${{ secrets.SERVICE_BUS_USER_NAME }}
-          SERVICE_BUS_USER_PASSWORD: ${{ secrets.SERVICE_BUS_USER_PASSWORD }}
-          DMD_HIBERNATE_PASSWORD: ${{ secrets.DMD_HIBERNATE_PASSWORD }}
-          GCDM_HIBERNATE_PASSWORD: ${{ secrets.GCDM_HIBERNATE_PASSWORD }}
-          S3_USER: ${{ secrets.S3_USER_NAME }}
-          S3_SECRET: ${{ secrets.S3_SECRET_KEY }}
         run: |
-              echo "test_output=$(mvn clean test -fn -Dsuite=e2e -Denv=staging -Dheadless=true -Dpersistence_unit=remote 2>&1 | grep -o "Tests run: [0-9]*, Failures: [0-9]*, Errors: [0-9]*, Skipped: [0-9]*" | head -n 1)" >> "$GITHUB_OUTPUT"
-
-      - name: Extract test results
-        id: extract_results
-        run: |
-          tests_run_line=$(echo "${{ steps.tests.outputs.test_output }}" | grep -o "Tests run: [0-9]*, Failures: [0-9]*, Errors: [0-9]*, Skipped: [0-9]*" | head -n 1) >> "$GITHUB_OUTPUT"
-          echo "tests_run_line=$tests_run_line" >> "$GITHUB_OUTPUT"
-          echo "${{ steps.tests.outputs.test_output }}"
-
+          mvn clean test -Dsuite=daily
       - name: Get Allure history
         uses: actions/checkout@v3
         if: always()
