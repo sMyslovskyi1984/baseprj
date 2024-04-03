@@ -4,6 +4,7 @@ import base.BaseE2ETest;
 import com.codeborne.selenide.Selenide;
 import org.testng.annotations.Test;
 
+
 import static com.codeborne.selenide.Selenide.open;
 import static org.assertj.core.api.Assertions.assertThat;
 
