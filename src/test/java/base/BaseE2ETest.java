@@ -41,7 +41,7 @@ public class BaseE2ETest extends BaseTest {
     private void prepareBrowser() {
         var isHeadless = System.getProperty("headless");
         Configuration.reportsFolder = System.getProperty("project.parent.basedir");
-        Configuration.headless = isHeadless != null ? Boolean.parseBoolean(isHeadless) : Boolean.parseBoolean(System.getProperty("selenide.headless"));
+//        Configuration.headless = isHeadless != null ? Boolean.parseBoolean(isHeadless) : Boolean.parseBoolean(System.getProperty("selenide.headless"));
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 8000;
         Configuration.pageLoadTimeout = 15000;
