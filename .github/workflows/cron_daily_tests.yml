@@ -25,74 +25,74 @@ jobs:
         id: tests
         run: |
           mvn clean test -Dsuite=daily
-      - name: Get Allure history
-        uses: actions/checkout@v3
-        if: always()
-        continue-on-error: true
-        with:
-         ref: gh-pages
-         path: gh-pages
-
-      - name: Generate allure report
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        id: allure-report
-        with:
-          allure_results: allure-results
-          allure_report: allure-report
-          allure_history: allure-history
-          keep_reports: 100
-
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-report
-          path: allure-report
-
-      - name: Deploy report to Github Pages
-        uses: peaceiris/actions-gh-pages@v3.9.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-history
-
-      - name: Prepare slack message
-        id: message
-        if: ${{ success() }}
-        run: |
-          tests_run_line="${{ steps.extract_results.outputs.tests_run_line }}"
-          echo "${{ steps.extract_results.outputs.tests_run_line }}"
-          if [ -n "$tests_run_line" ]; then
-            failures=$(echo "$tests_run_line" | grep -o "Failures: [0-9]*" | cut -d' ' -f2)
-            errors=$(echo "$tests_run_line" | grep -o "Errors: [0-9]*" | cut -d' ' -f2)
-            skipped=$(echo "$tests_run_line" | grep -o "Skipped: [0-9]*" | cut -d' ' -f2)
-            if [ "$failures" == "0" ] && [ "$errors" == "0" ] && [ "$skipped" == "0" ]; then
-              slack_message=":large_green_circle: All tests passed! $tests_run_line \n Report can be found here https://wmgtech.github.io/dsc-autotests"
-            else
-              slack_message=":red_circle: Tests failed! $tests_run_line \n Report can be found here https://wmgtech.github.io/dsc-autotests"
-            fi
-          else
-            slack_message=":red_circle: Unable to extract test results."
-          fi
-          echo "slack_message=$slack_message" >> "$GITHUB_OUTPUT"
-
-      - name: Notify about smoke test fail on Slack
-        if: always()
-        id: slack
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "${{ steps.message.outputs.slack_message }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+#      - name: Get Allure history
+#        uses: actions/checkout@v3
+#        if: always()
+#        continue-on-error: true
+#        with:
+#         ref: gh-pages
+#         path: gh-pages
+#
+#      - name: Generate allure report
+#        uses: simple-elf/allure-report-action@master
+#        if: always()
+#        id: allure-report
+#        with:
+#          allure_results: allure-results
+#          allure_report: allure-report
+#          allure_history: allure-history
+#          keep_reports: 100
+#
+#      - name: Upload artifacts
+#        if: always()
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: allure-report
+#          path: allure-report
+#
+#      - name: Deploy report to Github Pages
+#        uses: peaceiris/actions-gh-pages@v3.9.3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: allure-history
+#
+#      - name: Prepare slack message
+#        id: message
+#        if: ${{ success() }}
+#        run: |
+#          tests_run_line="${{ steps.extract_results.outputs.tests_run_line }}"
+#          echo "${{ steps.extract_results.outputs.tests_run_line }}"
+#          if [ -n "$tests_run_line" ]; then
+#            failures=$(echo "$tests_run_line" | grep -o "Failures: [0-9]*" | cut -d' ' -f2)
+#            errors=$(echo "$tests_run_line" | grep -o "Errors: [0-9]*" | cut -d' ' -f2)
+#            skipped=$(echo "$tests_run_line" | grep -o "Skipped: [0-9]*" | cut -d' ' -f2)
+#            if [ "$failures" == "0" ] && [ "$errors" == "0" ] && [ "$skipped" == "0" ]; then
+#              slack_message=":large_green_circle: All tests passed! $tests_run_line \n Report can be found here https://wmgtech.github.io/dsc-autotests"
+#            else
+#              slack_message=":red_circle: Tests failed! $tests_run_line \n Report can be found here https://wmgtech.github.io/dsc-autotests"
+#            fi
+#          else
+#            slack_message=":red_circle: Unable to extract test results."
+#          fi
+#          echo "slack_message=$slack_message" >> "$GITHUB_OUTPUT"
+#
+#      - name: Notify about smoke test fail on Slack
+#        if: always()
+#        id: slack
+#        uses: slackapi/slack-github-action@v1.24.0
+#        with:
+#          payload: |
+#            {
+#              "blocks": [
+#                {
+#                  "type": "section",
+#                  "text": {
+#                    "type": "mrkdwn",
+#                    "text": "${{ steps.message.outputs.slack_message }}"
+#                  }
+#                }
+#              ]
+#            }
+#        env:
+#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+#          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
