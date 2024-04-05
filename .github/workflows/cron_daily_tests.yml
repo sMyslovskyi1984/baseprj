@@ -9,7 +9,7 @@ permissions: write-all
 
 jobs:
   executeTests:
-    runs-on: windows
+    runs-on: ubuntu-lates
     steps:
       - name: Checkout
         uses: actions/checkout@v3
