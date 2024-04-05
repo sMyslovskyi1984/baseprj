@@ -9,7 +9,7 @@ permissions: write-all
 
 jobs:
   executeTests:
-    runs-on: self-hosted
+    runs-on: Standard GitHub-hosted runners
     steps:
       - name: Checkout
         uses: actions/checkout@v3
